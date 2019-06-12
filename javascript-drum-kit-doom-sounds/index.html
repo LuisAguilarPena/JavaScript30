@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+  <html lang="en">
+    <head>
+      <link href="https://fonts.googleapis.com/css?family=UnifrakturMaguntia&display=swap" rel="stylesheet">
+      <link rel="stylesheet" href="style.css">
+      <title>Doom Drum Kit</title>
+    </head>
+    <body>
+      <div class="keys">
+        <div data-key="65" class="key">
+          <kbd>A</kbd>
+          <span class="sound">explosion</span>
+        </div>
+        <div data-key="83" class="key">
+          <kbd>S</kbd>
+          <span class="sound">pistol</span>
+        </div>
+        <div data-key="68" class="key">
+          <kbd>D</kbd>
+          <span class="sound">punch</span>
+        </div>
+        <div data-key="70" class="key">
+          <kbd>F</kbd>
+          <span class="sound">shotgun</span>
+        </div>
+        <div data-key="71" class="key">
+          <kbd>G</kbd>
+          <span class="sound">super shotgun</span>
+        </div>
+      </div>
+
+      <audio data-key="65" src="sounds/explosion.wav"></audio>
+      <audio data-key="83" src="sounds/pistol.wav"></audio>
+      <audio data-key="68" src="sounds/punch.wav"></audio>
+      <audio data-key="70" src="sounds/shotgun.wav"></audio>
+      <audio data-key="71" src="sounds/superShotgun.wav"></audio>
+
+      <script>
+        // function to play a sound
+        const playSound = e => {
+          // atribute selector [] for inside the element
+          const audio = document.querySelector(`audio[data-key="${e.keyCode}"]`)
+          // I can select by div or by class .key 
+          const key = document.querySelector(`.key[data-key="${e.keyCode}"]`)
+          // to stop audio from running if no audio mathces key pressed, otherwise it console logs null
+          if (!audio) return;
+          // HTMLMediaElement.currentTime gives the current playback in seconds. Setting the value seeks the media in that new time, in this case rewinds it to beggining allowing us to not have to wait for sound to be over whenever we hit key again
+          audio.currentTime = 0;
+          // HTMLMediaElement.play() plays the meadi           
+          audio.play();
+          // add a class to the element, that way we can apply the style from the css, so now class = "key playing"
+          key.classList.add('playing');          
+          // function to end transition, had to use function declaration syntax for this to work
+        };
+        function removeTransition (e) {
+          if(e.propertyName !== 'transform') return;
+          // remove the playing class from the current element
+          console.log(this);
+          
+          this.classList.remove('playing');  
+        }
+        // in order to make the transition end we select all elements that have a key class, https://developer.mozilla.org/en-US/docs/Web/Events CSS transition events
+        const keys = document.querySelectorAll('.key');
+        // we add a listener to all the trasitioned events and we end it
+        keys.forEach(key => key.addEventListener('transitionend', removeTransition));
+        // listen to event
+        window.addEventListener('keydown', playSound);
+      </script>
+
+    </body>
+  </html>
